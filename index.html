@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FleetBook: trips, expenses and accounts for vehicle owners</title>
+<meta name="description" content="FleetBook is an Android app for owners of one or two vehicles: record trips and expenses, see profit and loss, and track what customers owe you. Your records stay on your phone and back up to your own Google Drive.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%230b5fa5'/%3E%3Cpath fill='%23fff' d='M27 37h34v28H27zM63 45h11l9 11v9H63z'/%3E%3Ccircle cx='38' cy='68' r='8' fill='%230b5fa5'/%3E%3Ccircle cx='72' cy='68' r='8' fill='%230b5fa5'/%3E%3Ccircle cx='38' cy='68' r='5.5' fill='%23fff'/%3E%3Ccircle cx='72' cy='68' r='5.5' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f7f9fc; --text: #1a1c1e; --muted: #50565f; --accent: #0b5fa5; --on-accent: #ffffff;
+    --card: #ffffff; --line: #dde3ea; --soft: #e6effa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111418; --text: #e2e2e6; --muted: #b8bfc8; --accent: #a2c9ff; --on-accent: #00315b;
+      --card: #1b2026; --line: #2c333b; --soft: #18222e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+  header { border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; gap: 12px; min-height: 64px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: var(--text); text-decoration: none; }
+  .brand svg { width: 36px; height: 36px; flex: none; }
+  nav { margin-left: auto; display: flex; gap: 16px; flex-wrap: wrap; }
+  nav a { text-decoration: none; font-weight: 500; }
+  nav a:hover { text-decoration: underline; }
+
+  .hero { padding: 56px 0 40px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+  .hero h1 { margin: 0 0 12px; font-size: clamp(32px, 6vw, 44px); line-height: 1.15; }
+  .hero .tagline { margin: 0 0 16px; font-size: 20px; color: var(--muted); }
+  .hero .logo { width: 160px; height: 160px; }
+  .badge { display: inline-block; margin-top: 8px; padding: 10px 18px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; }
+  .note { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+
+  section { padding: 32px 0; }
+  h2 { margin: 0 0 16px; font-size: 26px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 18px; color: var(--accent); }
+  .card p { margin: 0; color: var(--muted); }
+
+  .google { background: var(--soft); border-radius: 20px; padding: 24px; }
+  .google h2 { margin-bottom: 8px; }
+  .google ul { margin: 12px 0 0; padding-left: 20px; }
+  .google li { margin: 6px 0; }
+  code { font-size: 14px; overflow-wrap: anywhere; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 32px; padding: 24px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .links { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+
+  @media (max-width: 600px) {
+    .hero { grid-template-columns: 1fr; padding-top: 32px; }
+    .hero .logo { width: 96px; height: 96px; order: -1; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="FleetBook home">
+      <svg viewBox="0 0 108 108" aria-hidden="true">
+        <rect width="108" height="108" rx="24" fill="#0b5fa5"/>
+        <path fill="#fff" d="M27 37h34v28H27zM63 45h11l9 11v9H63z"/>
+        <path fill="#0b5fa5" d="M66 48h7l6 7H66z"/>
+        <circle cx="38" cy="68" r="8" fill="#0b5fa5"/><circle cx="72" cy="68" r="8" fill="#0b5fa5"/>
+        <circle cx="38" cy="68" r="5.5" fill="#fff"/><circle cx="72" cy="68" r="5.5" fill="#fff"/>
+      </svg>
+      FleetBook
+    </a>
+    <nav aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#google">Your data</a>
+      <a href="https://fog-saadi.github.io/Privacy-Policy/FleetBook-privacy-policy.html">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>FleetBook</h1>
+        <p class="tagline">Trips, profit &amp; loss, and who owes whom, for your truck, van or car.</p>
+        <p>FleetBook is a simple bookkeeping app for owners of one or two vehicles. Record every trip and expense,
+        see what each vehicle really earns, and keep track of what customers owe you and what you owe suppliers.
+        Your records stay on your phone and are backed up to your own Google Drive.</p>
+        <!-- After the Play Store listing is live, replace this span with:
+             <a class="badge" href="https://play.google.com/store/apps/details?id=com.saadistudios.fleetbook">Get it on Google Play</a> -->
+        <span class="badge">Coming soon to Google Play</span>
+        <p class="note">For Android phones.</p>
+      </div>
+      <svg class="logo" viewBox="0 0 108 108" aria-hidden="true">
+        <rect width="108" height="108" rx="24" fill="#0b5fa5"/>
+        <path fill="#fff" d="M27 37h34v28H27zM63 45h11l9 11v9H63z"/>
+        <path fill="#0b5fa5" d="M66 48h7l6 7H66z"/>
+        <circle cx="38" cy="68" r="8" fill="#0b5fa5"/><circle cx="72" cy="68" r="8" fill="#0b5fa5"/>
+        <circle cx="38" cy="68" r="5.5" fill="#fff"/><circle cx="72" cy="68" r="5.5" fill="#fff"/>
+      </svg>
+    </div>
+
+    <section id="features" aria-labelledby="features-title">
+      <h2 id="features-title">What FleetBook does</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Trips</h3>
+          <p>Record the vehicle, date, route, customer, freight and advance received. Each trip shows its own profit
+          after fuel, tolls and other trip costs.</p>
+        </div>
+        <div class="card">
+          <h3>Expenses</h3>
+          <p>Fuel, repairs, tyres, driver pay, token tax, insurance and loan installments, paid in cash or on
+          credit.</p>
+        </div>
+        <div class="card">
+          <h3>Receivable &amp; payable</h3>
+          <p>A ledger for every customer, fuel station, workshop and driver. See at a glance who owes you and whom
+          you owe.</p>
+        </div>
+        <div class="card">
+          <h3>Profit &amp; loss</h3>
+          <p>Income, expenses by category and net profit by month or year, for all vehicles or one vehicle.</p>
+        </div>
+        <div class="card">
+          <h3>Backup &amp; restore</h3>
+          <p>Automatic daily or weekly backup to your Google Drive. On a new phone, sign in and get everything
+          back.</p>
+        </div>
+        <div class="card">
+          <h3>Share statements</h3>
+          <p>Send a party's statement or a profit &amp; loss summary on WhatsApp or any other app.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="google" aria-labelledby="google-title">
+      <div class="google">
+        <h2 id="google-title">Why FleetBook asks for your Google account</h2>
+        <p>FleetBook has no servers. It uses your Google account so that your backups are stored in your own
+        Google Drive, where only you and FleetBook can reach them.</p>
+        <ul>
+          <li><strong>Sign in with Google</strong> tells FleetBook which account your backups belong to. FleetBook
+          keeps only your name and email address, on your phone.</li>
+          <li><strong>Google Drive access</strong> is limited to a hidden folder that only FleetBook can open
+          (Google describes it as "See, create, and delete its own configuration data in your Google Drive",
+          <code>drive.appdata</code>). FleetBook cannot see or change any of your other Drive files.</li>
+          <li>Your records go straight from your phone to your Drive. We never receive them, and FleetBook has no
+          ads and no analytics.</li>
+          <li>You can delete your backups and remove FleetBook's access at any time.</li>
+        </ul>
+        <p>Full details are in the
+        <a href="https://fog-saadi.github.io/Privacy-Policy/FleetBook-privacy-policy.html">FleetBook Privacy
+        Policy</a>.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="https://fog-saadi.github.io/Privacy-Policy/FleetBook-privacy-policy.html">Privacy Policy</a>
+      <a href="https://fog-saadi.github.io/Privacy-Policy/FleetBook-terms-of-service.html">Terms of Service</a>
+      <a href="mailto:c.sstechstudio@gmail.com">Contact: c.sstechstudio@gmail.com</a>
+    </div>
+    <p>FleetBook is made by Saadi Studios. © 2026 Saadi Studios.</p>
+  </div>
+</footer>
+</body>
+</html>
